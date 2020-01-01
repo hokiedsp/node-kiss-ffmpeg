@@ -188,8 +188,8 @@ ffmpeg = new FFmpeg({inputs: "path/to/file.mp4",
 Once arguments are set, run FFmpeg either asynchrously or synchronously:
 
 ```js
-ffmpeg.run()=>\<ChildProcess\>; // internally calls spawn
-ffmpeg.runSync()=>\<object\>;   // internaly calls spawnSync
+ffmpeg.run()=><ChildProcess>; // internally calls spawn
+ffmpeg.runSync()=><Object>;   // internaly calls spawnSync
 ```
 
 #### FFmpeg input & output urls
@@ -207,7 +207,6 @@ FFmpeg takes 3 types of options: input, output, and global. While the global opt
 | Object          | `{"c:v": "libx264", "an": null}`  | Specify FFmpeg option name (without leading '-') as property name and its value as the property value. For boolean options without value (e.g., `-an`) let the property value be `null`) |
 | String[]        | `["y", "qphist"]`                 | Useful if only specifying boolean options.                                                                                                                                               |
 | String          | `"-map 0 -c:v libx264 -c:a copy"` | String containing the full set of FFmpeg options as used in cli                                                                                                                          |
-|                 |                                   |
 
 There are a couple special options, unique to kiss.ffmpeg:
 
@@ -229,7 +228,6 @@ Before actually running FFmpeg asynchronously via `ffmpeg.run()`, you may want t
 | `disconnect` | `cb(proc)`               | Pass-through event from child_process                                                               |
 | `error`      | `cb(proc, err)`          | Emits errors passed from child_process or last line FFmpeg printed before terminating with status=1 |
 | `end`        | `cb(proc, code, signal)` | Pass-through event from child_process `exit` event                                                  |
-|              |                          |                                                                                                     |
 
 #### Event: `'start'`
 
@@ -344,7 +342,7 @@ The `'disconnect'` event is a redirected event from the spawned ChildProcess obj
 - `proc` \<ChildProcess\> The ChildProcess instance returned by `ffmpeg.run()`
 - `err` \<Error\> Error object returned from `proc`
 
-Emits errors passed from child_process or last line FFmpeg printed before terminating with status=1 |
+Emits errors passed from child_process or last line FFmpeg printed before terminating with `status=1`.
 
 The `error` event is emitted when an error occurs when running FFmpeg. This includes `proc` emitting its own `error` event or `proc` exits with non-zero `code` or terminated by a signal.
 
@@ -386,8 +384,6 @@ new FFmpeg({
 ```
 
 #### Pipe the output to a writable stream
-
-**Aliases**: `stream()`, `writeToStream()`.
 
 Starts processing and pipes ffmpeg output to a writable stream.
 
@@ -465,7 +461,7 @@ new FFmpeg({
 new FFmpeg({
   inputs: ["/path/to/part1.avi", "/path/to/part2.avi", "/path/to/part2.avi"],
   outputs: {url: "/path/to/merged.avi", map: ["[vout]","[aout]"]},
-  global: {filter_complex: "[0:0] [0:1] [1:0] [1:1] [2:0] [2:1] concat=n=3:v=1:a=1 [vout] [aout"}
+  global: {filter_complex: "[0:0] [0:1] [1:0] [1:1] [2:0] [2:1] concat=n=3:v=1:a=1 [vout] [aout]"}
 });
   .on("error", function(err) {
     console.error(`An error occurred: ${err.message}`);
@@ -478,7 +474,7 @@ new FFmpeg({
 #### Extract frames as images
 
 ```js
-// only one frame
+// only one frame at 7-second mark
 new FFmpeg({
   inputs: "/path/to/video.avi",
   outputs: { url: "thumb.jpg", options: { ss: 7, vframes: 1 } }
@@ -489,7 +485,7 @@ new FFmpeg({
 // three frames each separated by 1 second
 new FFmpeg({
   inputs: "/path/to/video.avi",
-  outputs: { url: "thumb%04d.jpg", options: { vf: "fps=1", vframes: h263 } }
+  outputs: { url: "thumb%04d.jpg", options: { vf: "fps=1", vframes: 3 } }
 }).on("end", function() {
   console.log("Screenshots taken");
 });
@@ -500,20 +496,20 @@ new FFmpeg({
 kiss-ffmpeg `FFmpeg` class has read-only static properties supported formats, codecs, encoders and filters.
 
 ```js
-FFmpeg.version // FFmpeg version
-FFmpeg.formats // available formats (including devices)
-FFmpeg.demuxers // available demuxers
-FFmpeg.muxers // available muxers
-FFmpeg.devices // available devices
-FFmpeg.codecs // all known codecs
-FFmpeg.encoders // available encoders
-FFmpeg.decoders // available decoders
-FFmpeg.bsfs // available bitstream filters
-FFmpeg.filters // available filters
-FFmpeg.pix_fmts // available pixel formats
-FFmpeg.sample_fmts // available audio sample formats
-FFmpeg.layouts // channel names and standard channel layouts
-FFmpeg.colors // recognized color names
+FFmpeg.version; // FFmpeg version
+FFmpeg.formats; // available formats (including devices)
+FFmpeg.demuxers; // available demuxers
+FFmpeg.muxers; // available muxers
+FFmpeg.devices; // available devices
+FFmpeg.codecs; // all known codecs
+FFmpeg.encoders; // available encoders
+FFmpeg.decoders; // available decoders
+FFmpeg.bsfs; // available bitstream filters
+FFmpeg.filters; // available filters
+FFmpeg.pix_fmts; // available pixel formats
+FFmpeg.sample_fmts; // available audio sample formats
+FFmpeg.layouts; // channel names and standard channel layouts
+FFmpeg.colors; // recognized color names
 ```
 
 Some properties return an object with additional parameters for each entry while others return an string array.
