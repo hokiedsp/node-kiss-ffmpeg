@@ -1,27 +1,22 @@
 # KISS (Keep It Stupid Simple) FFmpeg-API for Node.js
 
-<!-- [![Build Status](https://secure.travis-ci.org/node-kiss-ffmpeg/node-kiss-ffmpeg.svg?branch=master)](http://travis-ci.org/kiss-ffmpeg/node-kiss-ffmpeg) -->
-<!-- [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnode-kiss-ffmpeg%2Fnode-kiss-ffmpeg.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fkiss-ffmpeg%2Fnode-kiss-ffmpeg?ref=badge_shield) -->
+[![Build Status](https://travis-ci.com/hokiedsp/node-kiss-ffmpeg.svg?branch=master)](https://travis-ci.com/hokiedsp/node-kiss-ffmpeg)<!-- [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnode-kiss-ffmpeg%2Fnode-kiss-ffmpeg.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fkiss-ffmpeg%2Fnode-kiss-ffmpeg?ref=badge_shield) -->
 
-This library is a simple Node.js JavaScript wrapper for [FFmpeg](http://www.ffmpeg.org). It is aimed for those users who are familiar with FFmpeg cli options (See excellent [FFmpeg Documentation](https://ffmpeg.org/documentation.html)). For those who are searching for a fluent, easy to use library, consider using [kiss-ffmpeg library](https://github.com/kiss-ffmpeg/node-kiss-ffmpeg), which this project branched out from.
+This library is a simple Node.js JavaScript wrapper for [FFmpeg](http://www.ffmpeg.org). It is aimed for those users who are familiar with FFmpeg cli options (See excellent [FFmpeg Documentation](https://ffmpeg.org/documentation.html)). For those who are searching for a fluent, easy to use library, consider using [fluent-ffmpeg library](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg), which this project branched out from.
 
 ## Features
 
-- Automatic FFmpeg binary path search via FFMPEG_PATH system environmental variable. This feature is especially useful in Windows, when couple with [FFmpeg Winstaller Python script](https://github.com/hokiedsp/ffmpeg-wininstaller). Also, it is compatible with [kiss-ffmpeg library](https://github.com/kiss-ffmpeg/node-kiss-ffmpeg).
+- Automatic FFmpeg binary path search via FFMPEG_PATH system environmental variable. This feature is especially useful in Windows, when couple with [FFmpeg Winstaller Python script](https://github.com/hokiedsp/ffmpeg-wininstaller). This configuration originates from [fluent-ffmpeg library](https://github.com/fluent-ffmpeg/node-kiss-ffmpeg).
 - Wraps ffmpeg & ffprobe binaries for both asynchronous and synchrous execution modes
 - FFmpeg class instances provides useful asynchronous runtime features:
   - Custom events to capture the transcoding codec info and progress
   - Automatic redirection of input and output streams
 
-was branched from to strip off the fluent API in favor of
-
-abstracts the complex command-line usage of ffmpeg into a fluent, easy to use node.js module. In order to be able to use this module, make sure you have [ffmpeg](http://www.ffmpeg.org) installed on your system (including all necessary encoding libraries like libmp3lame or libx264).
-
 ### Prerequisites
 
 #### FFmpeg and FFprobe binaries
 
-kiss-ffmpeg was developed and tested with FFmpeg v4.2.1.
+kiss-ffmpeg was developed and tested with the latest FFmpeg (v4.2.1) but should work with all recent releases.
 
 If the `FFMPEG_PATH` environment variable is set, kiss-ffmpeg will use it as the full path to the `ffmpeg` executable. Otherwise, it will attempt to call `ffmpeg` directly (so it should be in your `PATH`). You must also have ffprobe installed (it comes with ffmpeg in most distributions). Similarly, kiss-ffmpeg will use the `FFPROBE_PATH` environment variable if it is set. If not found, it then will try `FFMPEG_PATH` then will attempt to call it in the `PATH`.
 
@@ -41,9 +36,7 @@ Or grabbing the latest version directly from GitHub as npm Dependency in `packag
 
 ```json
 "dependencies": {
-  ...
   "kiss-ffmpeg": "git+https://github.com/hokiedsp/node-kiss-ffmpeg.git",
-  ...
 }
 ```
 
@@ -63,7 +56,7 @@ The kiss-ffmpeg module contains 3 components:
 const { FFmpeg, ffprobe, ffprobeSync } = require("kiss-ffmpeg");
 ```
 
-- `FFmpeg` class, wrapping `ffmpeg` binary
+- `FFmpeg` class, `ffmpeg` binary loose wrapper
 - `ffprobe` function to call `ffprobe` asynchronously
 - `ffprobeSync` function to call `ffprobe` synchronously
 
@@ -111,7 +104,7 @@ The only difference is that `ffprobe()` returns a promise, which resolves to an 
 
 `options` argument accepts most of the cli FFprobe options as its keys. The available options are found [here](https://ffmpeg.org/ffprobe.html). By default, `show_format`, `show_streams`, `show_programs`, and `show_chapters` are enabled. To turn them off, use `hide_format`, `hide_streams`, `hide_programs`, `hide_chapters`, and `hide_all` options.
 
-`ffprobe()` and `ffprobeSync()` utilize the ffprobe option, `-print_format json=compact=1`, to retrieve the media information. Hence, `-print_format` option cannot be altered (among other options, which obstructs the operation of the functions).
+`ffprobe()` and `ffprobeSync()` utilize the ffprobe option, `-print_format json=compact=1`, to retrieve the media information. Hence, attempting to set `-print_format` option will throw an error (among other options, which obstruct the operation of the functions).
 
 #### Examples
 
@@ -119,7 +112,7 @@ The only difference is that `ffprobe()` returns a promise, which resolves to an 
 // async call
 ffprobe("/path/to/file.mp4")
   .then(info => console.log(info))
-  .catch(err => console.err(err));
+  .catch(err => console.error(err));
 
 // sync call (throws error if failed)
 let info = ffprobeSync("/path/to/file.mp4");
@@ -194,7 +187,7 @@ ffmpeg.runSync()=><Object>;   // internaly calls spawnSync
 
 #### FFmpeg input & output urls
 
-The url properties of `inputs` and `outputs` options are typically strings, which are then copied verbatimly to FFmpeg arguments. Alternatively, Node.js streams may be given to pipe in/out from the stream. Currently, only 1 stream could be used for input or output because these streams are mapped to stdin and stdout.
+The url properties of `inputs` and `outputs` options are typically strings, which are then copied verbatimly as `ffmpeg` spawn arguments. Alternatively, Node.js streams may be given to pipe in/out from the stream. Currently, only 1 stream could be used for input or output because these streams are mapped to stdin and stdout.
 
 TODO: Enable multi-stream support.
 
@@ -207,6 +200,13 @@ FFmpeg takes 3 types of options: input, output, and global. While the global opt
 | Object          | `{"c:v": "libx264", "an": null}`  | Specify FFmpeg option name (without leading '-') as property name and its value as the property value. For boolean options without value (e.g., `-an`) let the property value be `null`) |
 | String[]        | `["y", "qphist"]`                 | Useful if only specifying boolean options.                                                                                                                                               |
 | String          | `"-map 0 -c:v libx264 -c:a copy"` | String containing the full set of FFmpeg options as used in cli                                                                                                                          |
+
+If an option must be repeated multiple times, specify all option values as an array in its options property value. This feature is useful in setting the `-map` FFmpeg options:
+
+```js
+// to map [v] and [a] output nodes of a complex filter graph
+ffmpeg.outputs.map = ["[v]", "[a]"];
+```
 
 There are a couple special options, unique to kiss.ffmpeg:
 
@@ -224,10 +224,10 @@ Before actually running FFmpeg asynchronously via `ffmpeg.run()`, you may want t
 | `start`      | `cb(proc)`               | Emitted immediately after FFmpeg process begun                                                      |
 | `codecData`  | `cb(proc, data)`         | Emitted when FFmpeg finish printing its job summary                                                 |
 | `progress`   | `cb(proc, status)`       | Emitted when FFmpeg printed a progress line                                                         |
-| `close`      | `cb(proc, code, signal)` | Pass-through event from child_process                                                               |
-| `disconnect` | `cb(proc)`               | Pass-through event from child_process                                                               |
-| `error`      | `cb(proc, err)`          | Emits errors passed from child_process or last line FFmpeg printed before terminating with status=1 |
-| `end`        | `cb(proc, code, signal)` | Pass-through event from child_process `exit` event                                                  |
+| `close`      | `cb(proc, code, signal)` | Pass-through event from ChildProcess                                                               |
+| `disconnect` | `cb(proc)`               | Pass-through event from ChildProcess                                                               |
+| `error`      | `cb(proc, err)`          | Emits errors passed from ChildProcess or last line FFmpeg printed before terminating with status=1 |
+| `end`        | `cb(proc, code, signal)` | Pass-through event from ChildProcess `exit` event                                                  |
 
 #### Event: `'start'`
 
@@ -342,7 +342,7 @@ The `'disconnect'` event is a redirected event from the spawned ChildProcess obj
 - `proc` \<ChildProcess\> The ChildProcess instance returned by `ffmpeg.run()`
 - `err` \<Error\> Error object returned from `proc`
 
-Emits errors passed from child_process or last line FFmpeg printed before terminating with `status=1`.
+Emits errors passed from ChildProcess or last line FFmpeg printed before terminating with `status=1`.
 
 The `error` event is emitted when an error occurs when running FFmpeg. This includes `proc` emitting its own `error` event or `proc` exits with non-zero `code` or terminated by a signal.
 
