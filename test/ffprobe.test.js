@@ -95,7 +95,7 @@ describe("FFprobe Functions", function() {
         try {
           fs.accessSync(self.testfile);
           done();
-        } catch {
+        } catch (err) {
           new Error(
             "test video file does not exist, check path (" + self.testfile + ")"
           );

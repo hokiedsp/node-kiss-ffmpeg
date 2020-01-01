@@ -105,7 +105,7 @@ describe("Processor", function() {
     ].forEach(file => {
       try {
         fs.accessSync(file);
-      } catch {
+      } catch (err) {
         throw new Error(`test video file does not exist, check path (${file})`);
       }
     });
