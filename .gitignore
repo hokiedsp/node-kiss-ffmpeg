@@ -1,0 +1,6 @@
+*.project
+node_modules
+lib-cov
+*.swp
+.idea
+*.iml

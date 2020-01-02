@@ -1,0 +1,22 @@
+
+
+jobs:
+  include:
+    - os: linux
+      env: NODE_VERSION=8
+    - os: linux
+      env: NODE_VERSION=10
+    - os: linux
+      env: NODE_VERSION=12
+    - os: linux
+      env: NODE_VERSION=13
+
+script:
+  - tools/test-travis.sh
+  
+addons:
+  apt:
+    packages:
+      - wget
+      - tar
+      - bzip2

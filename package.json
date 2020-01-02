@@ -1,0 +1,36 @@
+{
+  "name": "kiss-ffmpeg",
+  "version": "0.1.0",
+  "description": "KISS (Keep-It-Stupid-Simple) API to FFMPEG (http://www.ffmpeg.org)",
+  "keywords": [
+    "ffmpeg"
+  ],
+  "author": "Takeshi Ikuma <tikuma@gmail.com>",
+  "contributors": [
+    {
+      "name": "Stefan Schaermeli",
+      "email": "schaermu@gmail.com"
+    },
+    {
+      "name": "Felix Fichte",
+      "email": "spruce@space-ships.de"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "mail": "tikuma@gmail.com",
+    "url": "http://github.com/fluent-ffmpeg/node-fluent-ffmpeg/issues"
+  },
+  "repository": "git://github.com/hokiedsp/node-kiss-ffmpeg.git",
+  "devDependencies": {
+    "mocha": "latest",
+    "should": "latest",
+    "jsdoc": "latest",
+    "async": "latest"
+  },
+  "main": "index",
+  "scripts": {
+    "test": "mocha --require should --reporter spec",
+    "sandbox": "node sandbox.js"
+  }
+}
