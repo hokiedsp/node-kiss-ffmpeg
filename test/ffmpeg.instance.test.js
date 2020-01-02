@@ -81,7 +81,7 @@ var podcast_outopts = {
 
  *****************************************************************/
 
-describe("Processor", function() {
+describe("Processor", function () {
   // check prerequisites once before all tests
   before(function prerequisites(done) {
     // check for ffmpeg installation
@@ -119,13 +119,13 @@ describe("Processor", function() {
 
     // Tests should call this so that created processes are watched
     // for end and checked during test cleanup
-    this.getCommand = function(...args) {
+    this.getCommand = function (...args) {
       var cmd = new FFmpeg(...args);
-      cmd.on("start", function(proc) {
+      cmd.on("start", function (proc) {
         processes.push(proc);
 
         // Remove process when it exits
-        proc.on("exit", function(proc) {
+        proc.on("exit", function (proc) {
           processes.splice(processes.indexOf(proc), 1);
         });
       });
@@ -134,7 +134,7 @@ describe("Processor", function() {
     };
 
     // Tests should call this to display stdout/stderr in case of error
-    this.saveOutput = function(stdout, stderr) {
+    this.saveOutput = function (stdout, stderr) {
       outputs.unshift([stdout, stderr]);
     };
 
@@ -150,7 +150,7 @@ describe("Processor", function() {
     async.series(
       [
         // Ensure every process has finished
-        function(cb) {
+        function (cb) {
           if (self.processes.length) {
             if (self.outputs.length) {
               testhelper.logOutput(self.outputs[0][0], self.outputs[0][1]);
@@ -159,9 +159,9 @@ describe("Processor", function() {
             self.test.error(
               new Error(
                 self.processes.length +
-                  ' processes still running after "' +
-                  self.currentTest.title +
-                  '"'
+                ' processes still running after "' +
+                self.currentTest.title +
+                '"'
               )
             );
             cb();
@@ -171,11 +171,11 @@ describe("Processor", function() {
         },
 
         // Ensure all created files are removed
-        function(cb) {
+        function (cb) {
           async.each(
             self.files,
-            function(file, cb) {
-              fs.exists(file, function(exists) {
+            function (file, cb) {
+              fs.exists(file, function (exists) {
                 if (exists) {
                   fs.unlink(file, cb);
                 } else {
@@ -189,10 +189,10 @@ describe("Processor", function() {
                   self.test.error(
                     new Error(
                       "Expected created file " +
-                        file +
-                        ' by  "' +
-                        self.currentTest.title +
-                        '"'
+                      file +
+                      ' by  "' +
+                      self.currentTest.title +
+                      '"'
                     )
                   );
                   cb();
@@ -204,11 +204,11 @@ describe("Processor", function() {
         },
 
         // Ensure all created dirs are removed
-        function(cb) {
+        function (cb) {
           async.each(
             self.dirs,
-            function(dir, cb) {
-              fs.exists(dir, function(exists) {
+            function (dir, cb) {
+              fs.exists(dir, function (exists) {
                 if (exists) {
                   fs.rmdir(dir, cb);
                 } else {
@@ -222,10 +222,10 @@ describe("Processor", function() {
                   self.test.error(
                     new Error(
                       "Expected created directory " +
-                        dir +
-                        ' by  "' +
-                        self.currentTest.title +
-                        '"'
+                      dir +
+                      ' by  "' +
+                      self.currentTest.title +
+                      '"'
                     )
                   );
                   cb();
@@ -241,7 +241,7 @@ describe("Processor", function() {
     );
   });
 
-  describe("Process controls", function() {
+  describe("Process controls", function () {
     // it("should change the working directory", function(done) {
     //   var testFile = path.join(this.testdir, "testvideo.avi");
     //   this.files.push(testFile);
@@ -296,19 +296,7 @@ describe("Processor", function() {
     //   command.run();
     // });
 
-    it("should not keep node process running on completion", function(done) {
-      var script = `    
-        const {FFmpeg} = require('.');
-        const ffmpeg = new FFmpeg({
-            inputs:{url:'${this.testfilebig}', options:{t:1}},
-            outputs: {url: '/dev/null', options: {f:'null'}});
-        ffmpeg.run();
-      `;
-
-      exec(`node -e "${script}"`, { timeout: 1000 }, done);
-    });
-
-    it("should kill the process with .kill", function(done) {
+    it("should kill the process with .kill", function (done) {
       this.timeout(60000);
 
       var testFile = path.join(__dirname, "assets", "testProcessKill.avi");
@@ -320,19 +308,19 @@ describe("Processor", function() {
       });
 
       ffmpegJob
-        .on("start", function(proc) {
-          setTimeout(function() {
+        .on("start", function (proc) {
+          setTimeout(function () {
             proc.kill();
           }, 500);
         })
-        .on("end", function(proc, code, signal) {
+        .on("end", function (proc, code, signal) {
           signal.should.be.equal("SIGTERM");
           done();
         })
         .run();
     });
 
-    it("should send the process custom signals with .kill(signal)", function(done) {
+    it("should send the process custom signals with .kill(signal)", function (done) {
       this.timeout(60000);
 
       var testFile = path.join(
@@ -350,12 +338,12 @@ describe("Processor", function() {
       });
 
       ffmpegJob
-        .on("start", function(proc) {
-          setTimeout(function() {
+        .on("start", function (proc) {
+          setTimeout(function () {
             proc.kill("SIGKILL");
           }, 500);
         })
-        .on("end", function(proc, code, signal) {
+        .on("end", function (proc, code, signal) {
           signal.should.be.equal("SIGKILL");
           done();
         })
@@ -363,8 +351,8 @@ describe("Processor", function() {
     });
   });
 
-  describe("Events", function() {
-    it("should report codec data through 'codecData' event", function(done) {
+  describe("Events", function () {
+    it("should report codec data through 'codecData' event", function (done) {
       this.timeout(60000);
 
       var testFile = path.join(__dirname, "assets", "testOnCodecData.avi");
@@ -375,20 +363,19 @@ describe("Processor", function() {
         inputs: [this.testfilebig],
         outputs: { url: testFile, options: divx_outopts }
       })
-        .on("codecData", function(proc, data) {
+        .on("codecData", function (proc, data) {
           data.should.have.properties(["inputs", "outputs"]);
           reported = true;
           proc.kill();
         })
-        .on("end", function(proc, code, signal) {
-          signal.should.be.ok();
+        .on("end", function (proc, code, signal) {
           reported.should.be.true();
           done();
         })
         .run();
     });
 
-    it("should report codec data through 'codecData' event on piped inputs", function(done) {
+    it("should report codec data through 'codecData' event on piped inputs", function (done) {
       this.timeout(60000);
 
       var testFile = path.join(__dirname, "assets", "testOnCodecData.avi");
@@ -400,21 +387,20 @@ describe("Processor", function() {
         outputs: { url: testFile, options: divx_outopts }
         // logger: testhelper.logger
       })
-        .on("codecData", function(proc, data) {
+        .on("codecData", function (proc, data) {
           data.should.have.properties(["inputs", "outputs"]);
           reported = true;
           proc.stdin.end();
           proc.stdin.on("close", () => proc.kill());
         })
-        .on("end", function(proc, code, signal) {
-          signal.should.be.ok();
+        .on("end", function (proc, code, signal) {
           reported.should.be.true();
           done();
         })
         .run();
     });
 
-    it("should report codec data through 'codecData' for multiple inputs", function(done) {
+    it("should report codec data through 'codecData' for multiple inputs", function (done) {
       this.timeout(60000);
       let recorded = false;
       var testFile = path.join(__dirname, "assets", "testOnCodecData.wav");
@@ -428,20 +414,20 @@ describe("Processor", function() {
         }
         // logger: testhelper.logger
       })
-        .on("codecData", function(proc, data) {
+        .on("codecData", function (proc, data) {
           data.should.have.property("inputs");
           data.inputs.should.have.length(2);
           recorded = true;
           proc.kill();
         })
-        .on("end", function() {
+        .on("end", function () {
           recorded.should.be.true();
           done();
         })
         .run();
     });
 
-    it("should report progress through 'progress' event", function(done) {
+    it("should report progress through 'progress' event", function (done) {
       this.timeout(60000);
 
       var testFile = path.join(__dirname, "assets", "testOnProgress.avi");
@@ -453,17 +439,17 @@ describe("Processor", function() {
         inputs: this.testfilebig,
         outputs: { url: testFile, options: divx_outopts }
       })
-        .on("progress", function() {
+        .on("progress", function () {
           gotProgress = true;
         })
-        .on("end", function() {
+        .on("end", function () {
           gotProgress.should.be.true();
           done();
         })
         .run();
     });
 
-    it("should report start of ffmpeg process through 'start' event", function(done) {
+    it("should report start of ffmpeg process through 'start' event", function (done) {
       this.timeout(60000);
 
       var testFile = path.join(__dirname, "assets", "testStart.avi");
@@ -475,10 +461,10 @@ describe("Processor", function() {
       });
       let pstart;
       cmd
-        .on("start", function(proc) {
+        .on("start", function (proc) {
           pstart = proc;
         })
-        .on("end", function(proc) {
+        .on("end", function (proc) {
           proc.should.equal(pstart);
           done();
         })
@@ -635,8 +621,8 @@ describe("Processor", function() {
     //     );
     //   });
 
-    describe("saveToFile", function() {
-      it("should save the output file properly to disk", function(done) {
+    describe("saveToFile", function () {
+      it("should save the output file properly to disk", function (done) {
         var testFile = path.join(__dirname, "assets", "testConvertToFile.avi");
         this.files.push(testFile);
 
@@ -644,15 +630,15 @@ describe("Processor", function() {
           inputs: this.testfile,
           outputs: { url: testFile, options: divx_outopts }
         })
-          .on("error", function({ stdout, stderr }, err) {
+          .on("error", function ({ stdout, stderr }, err) {
             console.error(err.log);
             assert.ok(!err);
           })
-          .on("end", function() {
-            fs.exists(testFile, function(exist) {
+          .on("end", function () {
+            fs.exists(testFile, function (exist) {
               exist.should.equal(true);
               // check filesize to make sure conversion actually worked
-              fs.stat(testFile, function(err, stats) {
+              fs.stat(testFile, function (err, stats) {
                 assert.ok(!err && stats);
 
                 stats.size.should.above(0);
@@ -665,7 +651,7 @@ describe("Processor", function() {
           .run();
       });
 
-      it("should accept a stream as its source", function(done) {
+      it("should accept a stream as its source", function (done) {
         var testFile = path.join(
           __dirname,
           "assets",
@@ -678,15 +664,15 @@ describe("Processor", function() {
           inputs: instream,
           outputs: { url: testFile, options: divx_outopts }
         })
-          .on("error", function({ stdout, stderr }, err) {
+          .on("error", function ({ stdout, stderr }, err) {
             console.error(err.log);
             assert.ok(!err);
           })
-          .on("end", function() {
-            fs.exists(testFile, function(exist) {
+          .on("end", function () {
+            fs.exists(testFile, function (exist) {
               exist.should.equal(true);
               // check filesize to make sure conversion actually worked
-              fs.stat(testFile, function(err, stats) {
+              fs.stat(testFile, function (err, stats) {
                 assert.ok(!err && stats);
                 stats.size.should.above(0);
                 stats.isFile().should.equal(true);
@@ -698,7 +684,7 @@ describe("Processor", function() {
           .run();
       });
 
-      it("should pass input stream errors through to error handler", function(done) {
+      it("should pass input stream errors through to error handler", function (done) {
         var testFile = path.join(
           __dirname,
           "assets",
@@ -718,11 +704,11 @@ describe("Processor", function() {
           inputs: instream,
           outputs: { url: testFile, options: divx_outopts }
         })
-          .on("error", function(proc, err) {
+          .on("error", function (proc, err) {
             err.message.should.be.equal("Input stream error: Read Error");
             error_event = true;
           })
-          .on("end", function(proc, code, signal) {
+          .on("end", function (proc, code, signal) {
             fs.existsSync(testFile).should.be.false();
             error_event.should.be.true();
             done();
@@ -731,8 +717,8 @@ describe("Processor", function() {
       });
     });
 
-    describe("mergeToFile", function() {
-      it("should merge multiple files", function(done) {
+    describe("mergeToFile", function () {
+      it("should merge multiple files", function (done) {
         var testFile = path.join(__dirname, "assets", "testMergeAddOption.wav");
         this.files.push(testFile);
 
@@ -747,16 +733,16 @@ describe("Processor", function() {
             filter_complex: "[0:0] [1:0] [2:0] concat=n=3:v=0:a=1 [out]"
           }
         })
-          .on("error", function({ stdout, stderr }, err) {
+          .on("error", function ({ stdout, stderr }, err) {
             console.error(err.log);
             if (err) console.error(err.log);
             assert.ok(!err);
           })
-          .on("end", function() {
-            fs.exists(testFile, function(exist) {
+          .on("end", function () {
+            fs.exists(testFile, function (exist) {
               exist.should.equal(true);
               // check filesize to make sure conversion actually worked
-              fs.stat(testFile, function(err, stats) {
+              fs.stat(testFile, function (err, stats) {
                 assert.ok(!err && stats);
                 stats.size.should.above(0);
                 stats.isFile().should.equal(true);
@@ -769,9 +755,9 @@ describe("Processor", function() {
       });
     });
 
-    describe("writeToStream", function() {
-      describe("should save the output file properly to disk using a stream", function() {
-        it("...and close the stream when completed by default", function(done) {
+    describe("writeToStream", function () {
+      describe("should save the output file properly to disk using a stream", function () {
+        it("...and close the stream when completed by default", function (done) {
           let testFile = path.join(
             __dirname,
             "assets",
@@ -783,11 +769,10 @@ describe("Processor", function() {
             inputs: this.testfile,
             outputs: { url: outstream, options: divx_outopts }
           })
-            .on("error", function({ stdout, stderr }, err) {
-              console.error(err.log);
+            .on("error", function ({ stdout, stderr }, err) {
               assert.ok(!err);
             })
-            .on("end", function({ stdout, stderr }) {
+            .on("end", function ({ stdout, stderr }) {
               outstream.writableEnded.should.be.true();
               const stats = fs.statSync(testFile);
               stats.should.be.ok();
@@ -798,7 +783,7 @@ describe("Processor", function() {
             .run();
         });
 
-        it("...and keep the stream open if 'keepopen' output option is specified", function(done) {
+        it("...or keep the stream open if 'keepopen' output option is specified", function (done) {
           let testFile = path.join(
             __dirname,
             "assets",
@@ -813,11 +798,10 @@ describe("Processor", function() {
               options: { ...divx_outopts, keepopen: null }
             }
           })
-            .on("error", function({ stdout, stderr }, err) {
-              console.error(err.log);
+            .on("error", function ({ stdout, stderr }, err) {
               assert.ok(!err);
             })
-            .on("end", function({ stdout, stderr }) {
+            .on("end", function ({ stdout, stderr }) {
               outstream.writableEnded.should.be.false();
               outstream.end();
               const stats = fs.statSync(testFile);
@@ -829,7 +813,7 @@ describe("Processor", function() {
             .run();
         });
       });
-      it("should accept a stream as its source", function(done) {
+      it("should accept a stream as its source", function (done) {
         var testFile = path.join(
           __dirname,
           "assets",
@@ -844,19 +828,19 @@ describe("Processor", function() {
           inputs: instream,
           outputs: { url: outstream, options: divx_outopts }
         })
-          .on("error", function({ stdout, stderr }, err) {
+          .on("error", function ({ stdout, stderr }, err) {
             console.error(err.log);
             assert.ok(!err);
           })
-          .on("end", function({ stdout, stderr }) {
-            fs.exists(testFile, function(exist) {
+          .on("end", function ({ stdout, stderr }) {
+            fs.exists(testFile, function (exist) {
               if (!exist) {
                 console.log(stderr);
               }
 
               exist.should.equal(true);
               // check filesize to make sure conversion actually worked
-              fs.stat(testFile, function(err, stats) {
+              fs.stat(testFile, function (err, stats) {
                 assert.ok(!err && stats);
                 stats.size.should.above(0);
                 stats.isFile().should.equal(true);
@@ -868,7 +852,7 @@ describe("Processor", function() {
           .run();
       });
 
-      it("should pass output stream errors through to error handler", function(done) {
+      it("should pass output stream errors through to error handler", function (done) {
         const writeError = new Error("Write Error");
         const outstream = new (require("stream").Writable)({
           write(chunk, encoding, callback) {
@@ -884,11 +868,11 @@ describe("Processor", function() {
         let error_event = false;
 
         command
-          .on("error", function(proc, err) {
+          .on("error", function (proc, err) {
             err.message.should.be.equal("Output stream error: Write Error");
             error_event = true;
           })
-          .on("end", function(proc, code, signal) {
+          .on("end", function (proc, code, signal) {
             error_event.should.be.true();
             done();
           })
@@ -896,8 +880,8 @@ describe("Processor", function() {
       });
     });
 
-    describe("Outputs", function() {
-      it("should create multiple outputs", function(done) {
+    describe("Outputs", function () {
+      it("should create multiple outputs", function (done) {
         this.timeout(30000);
 
         var testFile1 = path.join(
@@ -946,19 +930,19 @@ describe("Processor", function() {
             }
           ]
         })
-          .on("error", function({ stdout, stderr }, err) {
+          .on("error", function ({ stdout, stderr }, err) {
             console.error(err.log);
             assert.ok(!err);
           })
-          .on("end", function() {
+          .on("end", function () {
             async.map(
               [testFile1, testFile2, testFile3],
-              function(file, cb) {
-                fs.exists(file, function(exist) {
+              function (file, cb) {
+                fs.exists(file, function (exist) {
                   exist.should.equal(true);
 
                   // check filesize to make sure conversion actually worked
-                  fs.stat(file, function(err, stats) {
+                  fs.stat(file, function (err, stats) {
                     assert.ok(!err && stats);
                     stats.size.should.above(0);
                     stats.isFile().should.equal(true);
@@ -967,7 +951,7 @@ describe("Processor", function() {
                   });
                 });
               },
-              function(err) {
+              function (err) {
                 //   testhelper.logError(err);
                 assert.ok(!err);
                 done();
@@ -978,12 +962,12 @@ describe("Processor", function() {
       });
     });
 
-    describe.skip("Remote I/O", function() {
+    describe.skip("Remote I/O", function () {
       this.timeout(60000);
 
       var ffserver;
 
-      before(function(done) {
+      before(function (done) {
         console.log("spawning ffserver");
         ffserver = spawn(
           "ffserver",
@@ -1001,29 +985,29 @@ describe("Processor", function() {
           }
         }
 
-        ffserver.stdout.on("data", function(d) {
+        ffserver.stdout.on("data", function (d) {
           if (d.toString().match(/server started/i)) {
             ready();
           }
         });
 
-        ffserver.stderr.on("data", function(d) {
+        ffserver.stderr.on("data", function (d) {
           if (d.toString().match(/server started/i)) {
             ready();
           }
         });
       });
 
-      beforeEach(function(done) {
+      beforeEach(function (done) {
         setTimeout(done, 5000);
       });
 
-      after(function(done) {
+      after(function (done) {
         ffserver.kill();
         setTimeout(done, 1000);
       });
 
-      it("should take input from a RTSP stream", function(done) {
+      it("should take input from a RTSP stream", function (done) {
         var testFile = path.join(__dirname, "assets", "testRTSPInput.avi");
         this.files.push(testFile);
 
@@ -1034,15 +1018,15 @@ describe("Processor", function() {
             options: { ...divx_outopts, t: 1, vf: "scale=w=320:h=240" }
           }
         })
-          .on("error", function({ stdout, stderr }, err) {
+          .on("error", function ({ stdout, stderr }, err) {
             console.error(err.log);
             assert.ok(!err);
           })
-          .on("end", function() {
-            fs.exists(testFile, function(exist) {
+          .on("end", function () {
+            fs.exists(testFile, function (exist) {
               exist.should.equal(true);
               // check filesize to make sure conversion actually worked
-              fs.stat(testFile, function(err, stats) {
+              fs.stat(testFile, function (err, stats) {
                 assert.ok(!err && stats);
                 stats.size.should.above(0);
                 stats.isFile().should.equal(true);
@@ -1054,7 +1038,7 @@ describe("Processor", function() {
           .run();
       });
 
-      it("should take input from an URL", function(done) {
+      it("should take input from an URL", function (done) {
         var testFile = path.join(__dirname, "assets", "testURLInput.avi");
         this.files.push(testFile);
 
@@ -1065,15 +1049,15 @@ describe("Processor", function() {
             options: { ...divx_outopts, t: 1, vf: "scale=w=320:h=240" }
           }
         })
-          .on("error", function({ stdout, stderr }, err) {
+          .on("error", function ({ stdout, stderr }, err) {
             console.error(err.log);
             assert.ok(!err);
           })
-          .on("end", function() {
-            fs.exists(testFile, function(exist) {
+          .on("end", function () {
+            fs.exists(testFile, function (exist) {
               exist.should.equal(true);
               // check filesize to make sure conversion actually worked
-              fs.stat(testFile, function(err, stats) {
+              fs.stat(testFile, function (err, stats) {
                 assert.ok(!err && stats);
                 stats.size.should.above(0);
                 stats.isFile().should.equal(true);
@@ -1085,7 +1069,7 @@ describe("Processor", function() {
           .run();
       });
 
-      it("should output to a RTP stream", function(done) {
+      it("should output to a RTP stream", function (done) {
         this.getCommand({
           inputs: this.testfilebig,
           outputs: {
@@ -1093,19 +1077,19 @@ describe("Processor", function() {
             options: { "c:v": "libx264", "c:a": "copy" }
           }
         })
-          .on("error", function({ stdout, stderr }, err) {
+          .on("error", function ({ stdout, stderr }, err) {
             console.error(err.log);
             assert.ok(!err);
           })
-          .on("end", function() {
+          .on("end", function () {
             done();
           })
           .run();
       });
     });
 
-    describe("Errors", function() {
-      it("should report an error when ffmpeg has been killed", function(done) {
+    describe("Errors", function () {
+      it("should report an error when ffmpeg has been killed", function (done) {
         this.timeout(10000);
 
         var testFile = path.join(__dirname, "assets", "testErrorKill.avi");
@@ -1115,34 +1099,34 @@ describe("Processor", function() {
           inputs: this.testfilebig,
           outputs: { url: testFile, options: divx_outopts }
         })
-          .on("start", function() {
-            setTimeout(function() {
+          .on("start", function () {
+            setTimeout(function () {
               command.kill("SIGKILL");
             }, 1000);
           })
-          .on("error", function(proc, err) {
+          .on("error", function (proc, err) {
             err.message.should.match(
               /FFmpeg was terminated with signal SIGKILL/
             );
             errored = true;
           })
-          .on("end", function() {
+          .on("end", function () {
             errored.should.be.true();
             done();
           })
           .run();
       });
 
-      it("should report ffmpeg errors", function(done) {
+      it("should report ffmpeg errors", function (done) {
         let errored = false;
         this.getCommand({
           inputs: this.testfilebig,
           outputs: "/will/not/be/created/anyway",
           global: ["invalidoption"]
         })
-          .on("error", function(proc, err) {
+          .on("error", function (proc, err) {
             err.message.should.match(
-              /Error splitting the argument list: Option not found\r\n/
+              /Error splitting the argument list: Option not found\r?\n/
             );
             errored = true;
           })

@@ -5,6 +5,20 @@
 var utils = require("../lib/utils");
 
 describe("Utilities", () => {
+  describe("strsignal()", () => {
+    it("should convert 15 to SIGNTERM", done => {
+      utils.strsignal(15).should.be.equal("SIGTERM");
+      done();
+    });
+    (process.platform === "win32" ? it.skip : it)("should convert 9 to SIGKILL", done => {
+      utils.strsignal(9).should.be.equal("SIGKILL");
+      done();
+    });
+    it("should convert 2 to SIGKINT", done => {
+      utils.strsignal(2).should.be.equal("SIGINT");
+      done();
+    });
+  });
   describe("parseOpts()", () => {
     it("should parse cli key-value option string", done => {
       let opts = utils.parseOpts("-i video.mp4");
