@@ -1,6 +1,6 @@
 {
   "name": "kiss-ffmpeg",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "KISS (Keep-It-Stupid-Simple) API to FFMPEG (http://www.ffmpeg.org)",
   "keywords": [
     "ffmpeg-wrapper"
