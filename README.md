@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/hokiedsp/node-kiss-ffmpeg.svg?branch=master)](https://travis-ci.com/hokiedsp/node-kiss-ffmpeg)<!-- [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnode-kiss-ffmpeg%2Fnode-kiss-ffmpeg.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fkiss-ffmpeg%2Fnode-kiss-ffmpeg?ref=badge_shield) -->
 
-This library is a simple Node.js JavaScript wrapper for [FFmpeg](http://www.ffmpeg.org). It is aimed for those users who are familiar with FFmpeg cli options (See excellent [FFmpeg Documentation](https://ffmpeg.org/documentation.html)). For those who are searching for a fluent, easy to use library, consider using [fluent-ffmpeg library](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg), which this project branched out from.
+This library is a simple Node.js JavaScript wrapper for [FFmpeg](http://www.ffmpeg.org). It is aimed for those users who are familiar with FFmpeg cli options (See excellent [FFmpeg Documentation](https://ffmpeg.org/documentation.html)). For those who are searching for a fluent, easy to use library, consider using [fluent-ffmpeg library](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg), which this project is loosely based on.
 
 ## Features
 
@@ -13,6 +13,10 @@ This library is a simple Node.js JavaScript wrapper for [FFmpeg](http://www.ffmp
   - Automatic redirection of input and output streams
 
 ### Prerequisites
+
+#### Node Version
+
+Currently, kiss-ffmpeg requires Node.js v12.0.0 or later as it makes a heavy use of `str.matchAll()`.
 
 #### FFmpeg and FFprobe binaries
 
@@ -215,15 +219,17 @@ There are a couple special options, unique to kiss.ffmpeg:
 | global | `show_banner` | kiss.ffmpeg by default specifies `-hide_banner` global option when calling FFmpeg to minimize clatter in stderr stream. Use this option to override the default behavior.                                       |
 | output | `keepopen`    | When an output stream object is specified instead of url string, kiss.ffmpeg automatically closes the stream when FFmpeg process exits. Specifing `keepopen` option to the piped output leaves the stream open. |
 
+**Note:** Be aware that these option settings are **not** validated by kiss-ffmpeg.
+
 ### Setting event handlers
 
 Before actually running FFmpeg asynchronously via `ffmpeg.run()`, you may want to set event listeners on it to be notified when FFmpeg process is done. There are 2 ways to capture events from the FFmpeg process: via the Child_Process instance `run()` returns or via the `FFmpeg` instance. Please see [Node.js Child_Process documentation](https://nodejs.org/api/child_process.html#child_process_class_childprocess) for the former, and `FFmpeg` instance fires the following events:
 
-| Event Name   | Callback Signature       | Description                                                                                         |
-| ------------ | ------------------------ | --------------------------------------------------------------------------------------------------- |
-| `start`      | `cb(proc)`               | Emitted immediately after FFmpeg process begun                                                      |
-| `codecData`  | `cb(proc, data)`         | Emitted when FFmpeg finish printing its job summary                                                 |
-| `progress`   | `cb(proc, status)`       | Emitted when FFmpeg printed a progress line                                                         |
+| Event Name   | Callback Signature       | Description                                                                                        |
+| ------------ | ------------------------ | -------------------------------------------------------------------------------------------------- |
+| `start`      | `cb(proc)`               | Emitted immediately after FFmpeg process begun                                                     |
+| `codecData`  | `cb(proc, data)`         | Emitted when FFmpeg finish printing its job summary                                                |
+| `progress`   | `cb(proc, status)`       | Emitted when FFmpeg printed a progress line                                                        |
 | `close`      | `cb(proc, code, signal)` | Pass-through event from ChildProcess                                                               |
 | `disconnect` | `cb(proc)`               | Pass-through event from ChildProcess                                                               |
 | `error`      | `cb(proc, err)`          | Emits errors passed from ChildProcess or last line FFmpeg printed before terminating with status=1 |
@@ -493,7 +499,7 @@ new FFmpeg({
 
 ### Querying capabilities of the installed FFmpeg
 
-kiss-ffmpeg `FFmpeg` class has read-only static properties supported formats, codecs, encoders and filters.
+kiss-ffmpeg `FFmpeg` class has read-only static class properties supported formats, codecs, encoders and filters.
 
 ```js
 FFmpeg.version; // FFmpeg version
@@ -513,6 +519,17 @@ FFmpeg.colors; // recognized color names
 ```
 
 Some properties return an object with additional parameters for each entry while others return an string array.
+
+Furthermore, there are static class methods to get more details:
+
+```js
+FFmpeg.getMuxerInfo(name);
+FFmpeg.getDemuxerInfo(name);
+FFmpeg.getEncoderInfo(name);
+FFmpeg.getDecoderInfo(name);
+FFmpeg.getBsfInfo(name);
+FFmpeg.getFilterInfo(name);
+```
 
 ### Spawning a bare FFmpeg process
 
