@@ -529,6 +529,18 @@ FFmpeg.getBsfInfo(name);
 FFmpeg.getFilterInfo(name);
 ```
 
+`getXxxInfo()` methods throws error if the name is invalid. To check check if the supplied FFmpeg binary supports the required feature, use `supportsXxx()` methods:
+
+```js
+// returns true if supported, false otherwise
+FFmpeg.supportsMuxer(name);
+FFmpeg.supportsDemuxer(name);
+FFmpeg.supportsEncoder(name);
+FFmpeg.supportsDecoder(name);
+FFmpeg.supportsBsf(name);
+FFmpeg.supportsFilter(name);
+```
+
 ### Spawning a bare FFmpeg process
 
 kiss.ffmpeg FFmpeg class exposes low-level static functions to spawn FFmpeg process:

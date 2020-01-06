@@ -17,7 +17,7 @@ describe("FFmpeg Capabilities", function() {
     done();
   });
 
-  it("should enable querying for available demuxers", function(done) {
+  it("should enable querying for the details of available demuxers", function(done) {
     let chksht = [
       false, // name
       false, // long_name
@@ -37,6 +37,13 @@ describe("FFmpeg Capabilities", function() {
 
     chksht.forEach(chk => chk.should.be.true());
 
+    done();
+  });
+
+  it("should check if a demuxer is supported", function(done) {
+    // make sure all fields get filled at least once
+    FFmpeg.supportsDemuxer(Object.keys(FFmpeg.demuxers)[0]).should.be.true();
+    FFmpeg.supportsDemuxer("notademuxer").should.be.false();
     done();
   });
 
@@ -71,6 +78,13 @@ describe("FFmpeg Capabilities", function() {
 
     chksht.forEach(chk => chk.should.be.true());
 
+    done();
+  });
+
+  it("should check if a muxer is supported", function(done) {
+    // make sure all fields get filled at least once
+    FFmpeg.supportsMuxer(Object.keys(FFmpeg.muxers)[0]).should.be.true();
+    FFmpeg.supportsMuxer("notamuxer").should.be.false();
     done();
   });
 
@@ -122,7 +136,7 @@ describe("FFmpeg Capabilities", function() {
     done();
   });
 
-  it("should enable querying for available encoders and decoders", function(done) {
+  it("should enable querying for the details of available encoders and decoders", function(done) {
     let chksht = [].fill(false, 0, 11);
 
     // make sure all fields get filled at least once
@@ -160,6 +174,20 @@ describe("FFmpeg Capabilities", function() {
     done();
   });
 
+  it("should check if a encoder is supported", function(done) {
+    // make sure all fields get filled at least once
+    FFmpeg.supportsEncoder(Object.keys(FFmpeg.encoders)[0]).should.be.true();
+    FFmpeg.supportsEncoder("notanecoder").should.be.false();
+    done();
+  });
+
+  it("should check if a decoder is supported", function(done) {
+    // make sure all fields get filled at least once
+    FFmpeg.supportsDecoder(Object.keys(FFmpeg.decoders)[0]).should.be.true();
+    FFmpeg.supportsDecoder("notadecoder").should.be.false();
+    done();
+  });
+
   it("should enable querying for available bitstream filters", function(done) {
     checkStringArray(FFmpeg.bsfs);
     done();
@@ -186,6 +214,13 @@ describe("FFmpeg Capabilities", function() {
     (() => {
       FFmpeg.getBsfInfo("invalid");
     }).should.throw();
+    done();
+  });
+
+  it("should check if a bitstream filter is supported", function(done) {
+    // make sure all fields get filled at least once
+    FFmpeg.supportsBsf(FFmpeg.bsfs[0]).should.be.true();
+    FFmpeg.supportsBsf("notabsf").should.be.false();
     done();
   });
 
@@ -257,6 +292,13 @@ describe("FFmpeg Capabilities", function() {
     (() => {
       FFmpeg.getFilterInfo("invalid");
     }).should.throw();
+    done();
+  });
+
+  it("should check if a filter is supported", function(done) {
+    // make sure all fields get filled at least once
+    FFmpeg.supportsFilter(Object.keys(FFmpeg.filters)[0]).should.be.true();
+    FFmpeg.supportsFilter("notafilter").should.be.false();
     done();
   });
 
