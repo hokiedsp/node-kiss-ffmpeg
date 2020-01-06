@@ -1,33 +1,29 @@
-var ffmpeg = require('../index');
+var ffmpeg = require("kiss-ffmpeg");
 
 // make sure you set the correct path to your video file
-var proc = ffmpeg('/path/to/your_movie.avi')
-  // set video bitrate
-  .videoBitrate(1024)
-  // set target codec
-  .videoCodec('divx')
-  // set aspect ratio
-  .aspect('16:9')
-  // set size in percent
-  .size('50%')
-  // set fps
-  .fps(24)
-  // set audio bitrate
-  .audioBitrate('128k')
-  // set audio codec
-  .audioCodec('libmp3lame')
-  // set number of audio channels
-  .audioChannels(2)
-  // set custom option
-  .addOption('-vtag', 'DIVX')
-  // set output format to force
-  .format('avi')
+var proc = new FFmpeg({
+  inputs: "/path/to/your_movie.avi",
+  outputs: {
+    url: "/path/to/your_target.avi",
+    options: {
+      "b:v": '1024k', // set video bitrate
+      "c:v": "divx", // set target codec
+      vf: "setdar=16/9,scale=0.5*in_w:0.5*in_h", // video filter: set aspect ratio & half the video frame size
+      r: 24, // set fps
+      "b:a": "128k", // set audio bitrate
+      "c:a": "libmp3lame", // set audio codec
+      ac: 2, // set number of audio channels
+      vtag: "DIVX", // set custom option
+      f: "avi" // set output format to force
+    }
+  }
+})
   // setup event handlers
-  .on('end', function() {
-    console.log('file has been converted succesfully');
+  .on("end", function() {
+    console.log("file has been converted succesfully");
   })
-  .on('error', function(err) {
-    console.log('an error happened: ' + err.message);
+  .on("error", function(proc, err) {
+    console.log("an error happened: " + err.message);
   })
-  // save to file
-  .save('/path/to/your_target.avi');
+  // run
+  .run();

@@ -1,6 +1,6 @@
-var ffmpeg = require('../index');
+var { ffprobeSync } = require("../index");
 
 // make sure you set the correct path to your video file
-ffmpeg.ffprobe('/path/to/your_movie.avi',function(err, metadata) {
-  console.log(require('util').inspect(metadata, false, null));
-});
+console.log(
+  require("util").inspect(ffprobeSync("/path/to/your_movie.avi"), false, null)
+);

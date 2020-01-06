@@ -1,15 +1,25 @@
-var ffmpeg = require('../index');
+var ffmpeg = require("../index");
 
-var proc = ffmpeg('/path/to/your_movie.avi')
-  // setup event handlers
-  .on('filenames', function(filenames) {
-    console.log('screenshots are ' + filenames.join(', '));
+// take 2 screenshots at predefined timemarks and size
+var proc = new FFmpeg({
+  inputs: "/path/to/your_movie.avi",
+  outputs: {
+    url: "/path/to/thumbnail/folder/thumb%04d.jpg",
+    options: {
+      ss: 2,
+      vf: "fps=1/4, scale=150:100",
+      vframes: 2
+    }
+  }
+})
+  // setup event handlers (filenames event is not supported in kiss-ffmpeg)
+  // .on("filenames", function(filenames) {
+  //   console.log("screenshots are " + filenames.join(", "));
+  // })
+  .on("end", function() {
+    console.log("screenshots were saved");
   })
-  .on('end', function() {
-    console.log('screenshots were saved');
+  .on("error", function(proc, err) {
+    console.log("an error happened: " + err.message);
   })
-  .on('error', function(err) {
-    console.log('an error happened: ' + err.message);
-  })
-  // take 2 screenshots at predefined timemarks and size
-  .takeScreenshots({ count: 2, timemarks: [ '00:00:02.000', '6' ], size: '150x100' }, '/path/to/thumbnail/folder');
+  .run();
