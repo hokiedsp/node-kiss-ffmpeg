@@ -348,9 +348,7 @@ The `'disconnect'` event is a redirected event from the spawned ChildProcess obj
 - `proc` \<ChildProcess\> The ChildProcess instance returned by `ffmpeg.run()`
 - `err` \<Error\> Error object returned from `proc`
 
-Emits errors passed from ChildProcess or last line FFmpeg printed before terminating with `status=1`.
-
-The `error` event is emitted when an error occurs when running FFmpeg. This includes `proc` emitting its own `error` event or `proc` exits with non-zero `code` or terminated by a signal.
+The `error` event is emitted when an error occurs when running FFmpeg. This includes `proc` emitting its own `error` event or `proc` exits with non-zero `code` or terminated by a signal or errors passed from underlying ChildProcess.
 
 ```js
 ffmpeg.on("error", (proc, err) => {
