@@ -521,15 +521,15 @@ Some properties return an object with additional parameters for each entry while
 Furthermore, there are static class methods to get more details:
 
 ```js
-FFmpeg.getMuxerInfo(name);
-FFmpeg.getDemuxerInfo(name);
-FFmpeg.getEncoderInfo(name);
-FFmpeg.getDecoderInfo(name);
-FFmpeg.getBsfInfo(name);
-FFmpeg.getFilterInfo(name);
+FFmpeg.getMuxerInfo(name); // name: any of FFmpeg.muxers keys
+FFmpeg.getDemuxerInfo(name); // name: any of FFmpeg.demuxers keys
+FFmpeg.getEncoderInfo(name); // name: any of FFmpeg.encoders keys
+FFmpeg.getDecoderInfo(name); // name: any of FFmpeg.decoders keys
+FFmpeg.getBsfInfo(name); // name: any of FFmpeg.bsfs element
+FFmpeg.getFilterInfo(name); // name: any of FFmpeg.filters keys
 ```
 
-`getXxxInfo()` methods throws error if the name is invalid. To check check if the supplied FFmpeg binary supports the required feature, use `supportsXxx()` methods:
+`getXxxInfo()` methods throw error if the name is invalid. To check check if the supplied FFmpeg binary supports the required feature, use `supportsXxx()` methods:
 
 ```js
 // returns true if supported, false otherwise

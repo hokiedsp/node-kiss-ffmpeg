@@ -3,7 +3,9 @@
   "version": "0.3.0",
   "description": "KISS (Keep-It-Stupid-Simple) API to FFMPEG (http://www.ffmpeg.org)",
   "keywords": [
-    "ffmpeg-wrapper"
+    "ffmpeg-wrapper",
+    "ffmpeg",
+    "node.js"
   ],
   "homepage": "http://github.com/hokiedsp/node-kiss-ffmpeg",
   "author": "Takeshi Ikuma <tikuma@gmail.com>",
