@@ -1,6 +1,6 @@
 {
   "name": "kiss-ffmpeg",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "KISS (Keep-It-Stupid-Simple) API to FFMPEG (http://www.ffmpeg.org)",
   "keywords": [
     "ffmpeg-wrapper",
@@ -16,14 +16,14 @@
   },
   "repository": "git://github.com/hokiedsp/node-kiss-ffmpeg.git",
   "devDependencies": {
-    "mocha": "latest",
-    "should": "latest",
+    "async": "latest",
     "jsdoc": "latest",
-    "async": "latest"
+    "mocha": "^8.4.0",
+    "should": "latest"
   },
   "main": "index",
   "scripts": {
     "test": "mocha --require should --reporter spec",
-    "sandbox": "node sandbox.js"
+    "sandbox": "node test/examples/progress.js"
   }
 }
