@@ -18,7 +18,7 @@
   "devDependencies": {
     "async": "latest",
     "jsdoc": "latest",
-    "mocha": "^8.4.0",
+    "mocha": "^10.2.0",
     "should": "latest"
   },
   "main": "index",
