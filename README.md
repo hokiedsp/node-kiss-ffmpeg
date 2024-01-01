@@ -322,8 +322,8 @@ ffmpeg
   .on("codecData", (proc, data) => {
     T = data.inputs[0].duration;
   })
-  .on("progress", (proc, status) {
-    console.log(`Processing: ${(status.time/T*100).toFixed(0)}% done");
+  .on("progress", (proc, status) => {
+    console.log(`Processing: ${(status.time/T*100).toFixed(0)}% done`);
   });
 ```
 
